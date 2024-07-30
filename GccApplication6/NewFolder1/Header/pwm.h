@@ -2,6 +2,7 @@
 #define PWM_H
 
 #include <avr/io.h>
+#include <avr/interrupt.h>
 
 extern volatile uint8_t PWM_delta;
 

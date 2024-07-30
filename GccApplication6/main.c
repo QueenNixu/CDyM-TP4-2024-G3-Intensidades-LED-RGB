@@ -1,6 +1,4 @@
 #include <avr/io.h>
-#define F_CPU 16000000UL
-#include <util/delay.h>
 #include <avr/interrupt.h>
 #include "SerialPort.h"
 #include "ADC.h"
@@ -8,41 +6,27 @@
 #include "UART.h"
 #include "PWM.h"
 
-volatile uint8_t color_recieved_flag = 0;
-
 int main(void) {
-	// Inicializar UART con configuración 9600bps, 8 bits de datos, 1 bit de parada
-	SerialPort_Init(0x68);
-	SerialPort_TX_Enable();
-	SerialPort_RX_Enable();
-	SerialPort_RX_Interrupt_Enable();
 	
-	// Inicializar ADC y PWM
-	ADC_Init();
-	PWM_Init();
+	SerialPort_Init(0x68); // Inicializar UART con configuración 9600bps, 8 bits de datos, 1 bit de parada
+	SerialPort_TX_Enable(); // Habilitar transmision
+	SerialPort_RX_Enable(); // Habilitar Recepsion
+	SerialPort_RX_Interrupt_Enable(); // Habilitar interrupcion
 	
-	// Configurar el PWM para el manejo de intensidad del rojo
-	//PWM_START;
-	PWM_Init();
-	LED_init();
+	ADC_Init(); // inicializar ADC
+	PWM_Init(); // inicializar PWM (por software y hardware)
+	LED_init(); // inicializar intensidades de cada color del LED
 	
-	sei();  // Habilitar interrupciones globales
+	sei(); 
 	
 	while (1) {
-		if (color_recieved_flag) {
-			// Leer el valor del ADC para el color seleccionado
-			uint16_t adc_value = ADC_Read(3);
-			update_color_intensity(adc_value);
-			
-			// Enviar intensidades de color por UART
-			//UART_send_color_intensity();
-			
-			// Limpiar el flag
-			color_recieved_flag = 0;
-		}
 		
-		// Esperar 500 ms antes de la siguiente iteración
-		_delay_ms(500);
+		// Leer el valor del ADC para el color seleccionado (valor seleccionado por default: 'B')
+		uint16_t adc_value = ADC_Read(3);
+		update_color_intensity(adc_value);
+			
+		// Enviar intensidades de color por UART
+		UART_send_color_intensity();
 	}
 
 	return 0;

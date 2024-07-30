@@ -7,20 +7,21 @@ volatile uint8_t blue_intensity = 0;
 volatile char current_color = 'B';
 
 void update_color_intensity(uint16_t adc_value) {
-	uint16_t intensity = adc_value / 4;
+	//uint16_t intensity = adc_value / 4;
+	uint16_t intensity = adc_value >> 2; // Mas eficiente
 	switch (current_color) {
 		case 'R':
-		red_intensity = intensity;
-		setPWM_red(red_intensity);
-		break;
+			red_intensity = intensity;
+			setPWM_red(red_intensity);
+			break;
 		case 'G':
-		green_intensity = intensity;
-		setPWM_green(green_intensity);
-		break;
+			green_intensity = intensity;
+			setPWM_green(green_intensity);
+			break;
 		case 'B':
-		blue_intensity = intensity;
-		setPWM_blue(blue_intensity);
-		break;
+			blue_intensity = intensity;
+			setPWM_blue(blue_intensity);
+			break;
 	}
 }
 
